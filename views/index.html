@@ -11,9 +11,7 @@
     <title>Home</title>
 </head>
 <body>
-    
     <nav class="navbar navbar-default navbar-inverse" style="border-radius: 0" role="navigation">
-        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                 <span class="sr-only">Toggle navigation</span>
@@ -23,8 +21,6 @@
             </button>
             <a class="navbar-brand" href="#">Home</a>
         </div>
-    
-        <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
                 <li class=""><a href="#">Link</a></li>
@@ -37,50 +33,56 @@
                 <button type="submit" class="btn btn-default">Submit</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="#" onclick="signin()" >Sign in</a></li>
-                <!-- <button class="btn btn-primary">Sign in</button> -->
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li><a href="#">Separated link</a></li>
-                    </ul>
-                </li>
+                <li class="active"><a href="#" class="signin" onclick="pageLoader(this.className)" >Sign in</a></li>
+                <li><a href="#" class="signup" onclick="pageLoader(this.className)">Sign up</a></li>
             </ul>
-        </div><!-- /.navbar-collapse -->
+        </div>
     </nav>
-    
-    <div class="container" id="container" style="display: none">
-        
-        <div class="row">
-            
+    <div class="container" id="container" >
+        <div class="row" id="signin" style="display: none">
             <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-push-2">
                 <form action="" method="POST" role="form" onsubmit="return signInValid(this[0].value, this[1].value)">
                     <legend>Sign in</legend>
-                
                     <div class="form-group">
                         <label for="username">Username</label>
                         <input type="text" class="form-control" id="username" placeholder="">
                     </div>
-                    
                     <div class="form-group">
                         <label for="passwd">Password</label>
                         <input type="password" class="form-control" id="passwd" placeholder="">
                     </div>
-                
                     <button type="submit" class="btn btn-primary">Sign in</button>
                 </form>
-                
             </div>
-            
         </div>
-        
-        
+        <div class="row" id="signup" style="display: none">
+            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-push-2">
+                <form action="" method="POST" role="form" onsubmit="return signUpValid(this)">
+                    <legend>Sign up</legend>
+                    
+                    <div class="alert alert-danger" style="display: none">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <strong>Failed to sign up!</strong> You must fill out this form
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fullname">Full Name(*)</label>
+                        <input type="text" class="form-control" id="fullname" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username(*)</label>
+                        <input type="text" class="form-control" id="username" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
+                    </div>
+                    <div class="form-group">
+                        <label for="passwd">Password(*)</label>
+                        <input type="password" class="form-control" id="passwd" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
+                    </div>
+                    <i style="display: block">(*): Required field</i>
+                    <button type="submit" class="btn btn-primary">Sign up</button>
+                </form>
+            </div>
+        </div>
     </div>
-    
-    
     <!-- <a id="signinModal" data-toggle="modal" href='#modal-id'></a>
     <form action="" method="POST" role="form" onsubmit="signInValid(this[0].value, this[1])">
     <div class="modal fade" id="modal-id">
@@ -118,17 +120,33 @@
     
 </body>
 <script>
-    let signin = () => {
-        $('#container').css('display', 'block')
+    let headerLoader = () => {
+        if(!cookie){
+
+        }
+    }
+    let tmp;
+    let pageLoader = (pageClassName) => {
+        $(`#${tmp}`).css('display', 'none');
+        $(`#${pageClassName}`).css('display', 'block');
+        tmp = pageClassName;
     }
     let signInValid = (username, passwd) => {
-        let tmp = ''; let i =0;
+        let currentAccount = '';
         for (let index = 0; index < Users.length; index++) {
-            if(Users[index].full_name == username){
-                tmp = Users[index]; index = Users.length -1;
+            if(Users[index].username === username){
+                currentAccount = Users[index]; index = Users.length -1;
             }
         }
-        if(tmp == '' || tmp.mk != passwd) alert('not ok'); else alert('ok')
+        if(currentAccount === '' || currentAccount.mk != passwd) alert('not ok'); else alert('ok')
+        return false;
+    }
+    let signUpValid = (signUpData) => {
+        for (let i = 0; i < signUpData.length; i++) {
+            if(signUpData[i].value === '' && signUpData[i].type !== 'submit'){
+                $('.alert-danger').css('display', 'block'); return false;
+            }            
+        }
         return false;
     }
 </script>
