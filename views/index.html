@@ -33,55 +33,12 @@
                 <button type="submit" class="btn btn-default">Submit</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="#" class="signin" onclick="pageLoader(this.className)" >Sign in</a></li>
-                <li><a href="#" class="signup" onclick="pageLoader(this.className)">Sign up</a></li>
+                <li class="active"><a href="#" class="signin" onclick="bodyLoader(this.className)" >Sign in</a></li>
+                <li><a href="#" class="signup" onclick="bodyLoader(this.className)">Sign up</a></li>
             </ul>
         </div>
     </nav>
     <div class="container" id="container" >
-        <div class="row" id="signin" style="display: none">
-            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-push-2">
-                <form action="" method="POST" role="form" onsubmit="return signInValid(this[0].value, this[1].value)">
-                    <legend>Sign in</legend>
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="">
-                    </div>
-                    <div class="form-group">
-                        <label for="passwd">Password</label>
-                        <input type="password" class="form-control" id="passwd" placeholder="">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Sign in</button>
-                </form>
-            </div>
-        </div>
-        <div class="row" id="signup" style="display: none">
-            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-push-2">
-                <form action="" method="POST" role="form" onsubmit="return signUpValid(this)">
-                    <legend>Sign up</legend>
-                    
-                    <div class="alert alert-danger" style="display: none">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <strong>Failed to sign up!</strong> You must fill out this form
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="fullname">Full Name(*)</label>
-                        <input type="text" class="form-control" id="fullname" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
-                    </div>
-                    <div class="form-group">
-                        <label for="username">Username(*)</label>
-                        <input type="text" class="form-control" id="username" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
-                    </div>
-                    <div class="form-group">
-                        <label for="passwd">Password(*)</label>
-                        <input type="password" class="form-control" id="passwd" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
-                    </div>
-                    <i style="display: block">(*): Required field</i>
-                    <button type="submit" class="btn btn-primary">Sign up</button>
-                </form>
-            </div>
-        </div>
     </div>
     <!-- <a id="signinModal" data-toggle="modal" href='#modal-id'></a>
     <form action="" method="POST" role="form" onsubmit="signInValid(this[0].value, this[1])">
@@ -120,16 +77,78 @@
     
 </body>
 <script>
+    let component = {signin : `
+        <div class="row" id="signin">
+            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-push-2">
+                <form action="" method="POST" role="form" onsubmit="return signInValid(this[0].value, this[1].value)">
+                    <legend>Sign in</legend>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="passwd">Password</label>
+                        <input type="password" class="form-control" id="passwd" placeholder="">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign in</button>
+                </form>
+            </div>
+        </div>
+    `,
+    signup : `
+    <div class="row" id="signup">
+            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-push-2">
+                <form id="signUpForm" action="" method="POST" role="form" onsubmit="return signUpValid(this)">
+                    <legend>Sign up</legend>
+                    
+                    <div class="alert alert-danger" style="display: none">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <strong>Failed to sign up!</strong> You must fill out this form
+                    </div>
+
+                    <div class="alert alert-danger" style="display: none">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <strong>Failed to sign up!</strong> Username is already use
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fullname">Full Name(*)</label>
+                        <input type="text" class="form-control" id="fullname" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username(*)</label>
+                        <input type="text" class="form-control" id="username" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
+                    </div>
+                    <div class="form-group">
+                        <label for="passwd">Password(*)</label>
+                        <input type="password" class="form-control" id="passwd" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
+                    </div>
+                    <i style="display: block">(*): Required field</i>
+                    <button type="submit" class="btn btn-primary">Sign up</button>
+                </form>
+            </div>
+        </div>
+    `,
+    home: `
+        
+    `
+    }
+    let session = '';
     let headerLoader = () => {
-        if(!cookie){
+        if(session === ''){
+
+        }
+        else{
 
         }
     }
     let tmp;
-    let pageLoader = (pageClassName) => {
-        $(`#${tmp}`).css('display', 'none');
-        $(`#${pageClassName}`).css('display', 'block');
-        tmp = pageClassName;
+    let bodyLoader = (pageClassName) => {
+        // $(`#${tmp}`).css('display', 'none');
+        // $(`#${pageClassName}`).css('display', 'block');
+        // tmp = pageClassName;
+        $('#container').html('');
+        $('#container').html(component[pageClassName]);
     }
     let signInValid = (username, passwd) => {
         let currentAccount = '';
@@ -142,11 +161,15 @@
         return false;
     }
     let signUpValid = (signUpData) => {
-        for (let i = 0; i < signUpData.length; i++) {
-            if(signUpData[i].value === '' && signUpData[i].type !== 'submit'){
-                $('.alert-danger').css('display', 'block'); return false;
+        for (let i = 2; i < signUpData.length - 1; i++) {
+            if(signUpData[i].value === ''){
+                $('.alert-danger').eq(0).css('display', 'block'); return false;
             }            
         }
+        if(Users.findIndex(u => u.username === signUpData['username'].value) !== -1){
+            $('.alert-danger').eq(1).css('display', 'block'); return false;
+        }
+        // document.forms['signUpForm'].reset();
         return false;
     }
 </script>
