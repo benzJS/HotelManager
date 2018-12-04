@@ -21,8 +21,8 @@
             </button>
             <a class="navbar-brand" href="#">Home</a>
         </div>
-        <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <ul class="nav navbar-nav">
+        <div class="collapse navbar-collapse navbar-ex1-collapse" id="header">
+            <!-- <ul class="nav navbar-nav">
                 <li class=""><a href="#">Link</a></li>
                 <li><a href="#">Link</a></li>
             </ul>
@@ -31,14 +31,14 @@
                     <input type="text" class="form-control" placeholder="Search">
                 </div>
                 <button type="submit" class="btn btn-default">Submit</button>
-            </form>
+            </form> -->
             <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="#" class="signin" onclick="bodyLoader(this.className)" >Sign in</a></li>
                 <li><a href="#" class="signup" onclick="bodyLoader(this.className)">Sign up</a></li>
             </ul>
         </div>
     </nav>
-    <div class="container" id="container" >
+    <div class="container" id="body" >
     </div>
     <!-- <a id="signinModal" data-toggle="modal" href='#modal-id'></a>
     <form action="" method="POST" role="form" onsubmit="signInValid(this[0].value, this[1])">
@@ -130,34 +130,62 @@
         </div>
     `,
     home: `
-        
+        <ul class="nav navbar-nav">
+        </ul>
+        <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="#" class="signin" onclick="bodyLoader(this.className)" >Sign in</a></li>
+            <li><a href="#" class="signup" onclick="bodyLoader(this.className)">Sign up</a></li>
+        </ul>
+    `,
+    client: `
+        <ul class="nav navbar-nav">
+            <li><a href="#">Orders</a></li>
+        </ul>
+        <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="#" class="signin" onclick="bodyLoader(this.className)" >Sign in</a></li>
+            <li><a href="#" class="signup" onclick="bodyLoader(this.className)">Sign up</a></li>
+        </ul>
     `
     }
     let session = '';
-    let headerLoader = () => {
-        if(session === ''){
-
-        }
-        else{
-
-        }
+    let headerLoader = (site) => {
+        $('#header').html('');
+        $('#header').html(component[site]);
     }
-    let tmp;
     let bodyLoader = (pageClassName) => {
         // $(`#${tmp}`).css('display', 'none');
         // $(`#${pageClassName}`).css('display', 'block');
         // tmp = pageClassName;
-        $('#container').html('');
-        $('#container').html(component[pageClassName]);
+        $('#body').html('');
+        $('#body').html(component[pageClassName]);
     }
     let signInValid = (username, passwd) => {
-        let currentAccount = '';
+        let accountInfo = '';
         for (let index = 0; index < Users.length; index++) {
             if(Users[index].username === username){
-                currentAccount = Users[index]; index = Users.length -1;
+                accountInfo = Users[index]; index = Users.length -1;
             }
         }
-        if(currentAccount === '' || currentAccount.mk != passwd) alert('not ok'); else alert('ok')
+        if(accountInfo === '' || accountInfo.mk != passwd) alert('not ok'); 
+        else {
+            session = {
+                username: accountInfo.username,
+                passwd: accountInfo.passwd,
+                type: accountInfo.type
+            };
+        }
         return false;
     }
     let signUpValid = (signUpData) => {
