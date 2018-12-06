@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="../public/stylesheet/css/bootstrap.min.css">
     <script src="../public/javascripts/bootstrap.min.js"></script>
     <script src="../model/users.js"></script>
+    <script src="../model/rooms.js"></script>
+    <script src="../model/orders.js"></script>
     <title>Home</title>
 </head>
 <style>
@@ -41,7 +43,7 @@
   opacity: 0.7;
 }
 </style>
-<body onload="headerLoader(session); ">
+<body onload="headerLoader(session); dataLoader()">
     <nav class="navbar navbar-default navbar-inverse" style="border-radius: 0" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -70,23 +72,7 @@
         </div>
     </nav>
     <div class="container" id="body" >
-        <div class="container" style="margin-bottom: 20px; border-style: solid; border-color: darkgray; border-radius: 20px">
-            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                <img src="../public/images/BWPlus_Astana_Hotel_Kasachstan.jpg" class="img-responsive" alt="Image" style="padding: 7px">
-            </div>
-            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="">
-                <h1>ASDLKSAJDLKSAJD</h1>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptate praesentium ex dicta, doloribus dolor neque nam quas consequuntur nostrum, porro atque accusantium aspernatur eos ad perspiciatis cumque obcaecati culpa animi.
-            </div>
-            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                <div class="row">
-                    <h2 style="text-align: right; color: green">$199</h2>
-                </div>
-                <div class="row">
-                    <button type="button" class="btn btn-large btn-block btn-success" >button</button>
-                </div>
-            </div>
-        </div>
+        
     </div>
 </body>
 <script>
@@ -167,8 +153,7 @@
             <button type="submit" class="btn btn-default">Submit</button>
         </form>
         <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="#" class="signin" onclick="bodyLoader(this.className)" >Sign in</a></li>
-            <li><a href="#" class="signup" onclick="bodyLoader(this.className)">Sign up</a></li>
+            <li class="active"><a href="#" class="accountinfo" onclick="bodyLoader(this.className)" >${session.fullname}</a></li>
         </ul>
     `,
     clientBody: `
@@ -234,12 +219,19 @@
                         <h2 style="text-align: right; color: green">$${r.price}</h2>
                     </div>
                     <div class="row">
-                        <button type="button" class="btn btn-large btn-block btn-success" >Order</button>
+                        <button type="button" class="btn btn-large btn-block btn-success" id="${r.id}" onclick="order(this.id)">Order</button>
                     </div>
                 </div>
             </div>
             `)
         })
+    }
+    let order = id => {
+        if(session === 'home') return bodyLoader('signin');
+        let cusOrderArr = new Promise((resolve, reject) => {
+            resolve(Orders.filter(order => order.username === session.username));
+        })
+        .then(arr => {console.log(arr)});
     }
     let signInValid = (username, passwd) => {
         let accountInfo = Users.find(u => u.username === username);
