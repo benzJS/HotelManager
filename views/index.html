@@ -52,19 +52,9 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Home</a>
+            <a class="navbar-brand" href="#" onclick="dataLoader()">Home</a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse" id="header">
-            <!-- <ul class="nav navbar-nav">
-                <li class=""><a href="#">Link</a></li>
-                <li><a href="#">Link</a></li>
-            </ul>
-            <form class="navbar-form navbar-left" role="search">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
-                </div>
-                <button type="submit" class="btn btn-default">Submit</button>
-            </form> -->
             <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="#" class="signin" onclick="bodyLoader(this.className)" >Sign in</a></li>
                 <li><a href="#" class="signup" onclick="bodyLoader(this.className)">Sign up</a></li>
@@ -73,9 +63,17 @@
     </nav>
     <div class="container" id="body" >
         
+        
+        
     </div>
 </body>
 <script>
+    let session = {
+        username: "alkdjsla"
+    };
+    let getFullName = () => {
+        return session.username;
+    }
     let component = {signin : `
         <div class="row" id="signin">
             <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-push-2">
@@ -142,20 +140,6 @@
             <li><a href="#" class="signup" onclick="bodyLoader(this.className)">Sign up</a></li>
         </ul>
     `,
-    clientHeader: `
-        <ul class="nav navbar-nav">
-            <li><a href="#">Orders</a></li>
-        </ul>
-        <form class="navbar-form navbar-left" role="search">
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search">
-            </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-        </form>
-        <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="#" class="accountinfo" onclick="bodyLoader(this.className)" >${session.fullname}</a></li>
-        </ul>
-    `,
     clientBody: `
         <div class="container" style="margin-bottom: 20px; border-style: solid; border-color: darkgray; border-radius: 20px">
             <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
@@ -189,21 +173,33 @@
             <li class="active"><a href="#" class="signin" onclick="bodyLoader(this.className)" >Sign in</a></li>
             <li><a href="#" class="signup" onclick="bodyLoader(this.className)">Sign up</a></li>
         </ul>
+    `,
+    accountInfo: `
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>User Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>${getFullName()}</td>
+                </tr>
+            </tbody>
+        </table>
     `
     }
-    let session = 'home';
+    
+    
     let headerLoader = site => {
-        $('#header').html('');
+        // $('#header').html('');
         $('#header').html(component[site]);
     }
     let bodyLoader = pageClassName => {
-        // $(`#${tmp}`).css('display', 'none');
-        // $(`#${pageClassName}`).css('display', 'block');
-        // tmp = pageClassName;
-        $('#body').html('');
         $('#body').html(component[pageClassName]);
     }
     let dataLoader = () => {
+        // $('#body').html('');
         Rooms.forEach(r => {
             $('#body').append(`
             <div class="container" style="margin-bottom: 20px; border-style: solid; border-color: darkgray; border-radius: 20px">
@@ -231,27 +227,49 @@
         let cusOrderArr = new Promise((resolve, reject) => {
             resolve(Orders.filter(order => order.username === session.username));
         })
-        .then(arr => {console.log(arr)});
+        .then(arr => {
+            if(arr.findIndex(order => order.room_id === id) !== -1) return alert('The order is alreay exists');
+            Orders.push({
+                username: session.username,
+                room_id: id
+            })
+            console.log(Orders);
+        });
     }
     let signInValid = (username, passwd) => {
-        let accountInfo = Users.find(u => u.username === username);
-        console.log(accountInfo);
-        if(typeof accountInfo === 'undefined' || accountInfo.passwd !== passwd) alert('not ok'); 
-        else {
+        let accountInfo = new Promise((resolve, reject) => {
+            resolve(Users.find(u => u.username === username));
+        })
+        .then(data => {
+            if(typeof data === 'undefined' || data.passwd !== passwd) return alert('not ok');
             session = {
-                username: accountInfo.username,
-                passwd: accountInfo.passwd,
-                type: accountInfo.type
+                username: data.username,
+                passwd: data.passwd,
+                type: data.type
             };
-            headerLoader(accountInfo.type);
-        }
+            component.clientHeader = `
+                <ul class="nav navbar-nav">
+                    <li><a href="#">Orders</a></li>
+                </ul>
+                <form class="navbar-form navbar-left" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                    </div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="active"><a href="#" class="accountinfo" onclick="bodyLoader('accountInfo')" >${data.fullname}</a></li>
+                </ul>
+            `
+            headerLoader(`${data.type}Header`); dataLoader();
+        });
         return false;
     }
     let signUpValid = (signUpData) => {
         for (let i = 2; i < signUpData.length - 1; i++) {
             if(signUpData[i].value === ''){
                 $('.alert-danger').eq(0).css('display', 'block'); return false;
-            }            
+            }
         }
         if(Users.findIndex(u => u.username === signUpData['username'].value) !== -1){
             $('.alert-danger').eq(1).css('display', 'block'); return false;
