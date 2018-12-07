@@ -90,12 +90,12 @@
                 
                 <div class="alert alert-danger" style="display: none">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <strong>Failed to sign up!</strong> You must fill out this form
+                    <strong>Đăng ký thất bại!</strong> Bạn phải nhập đầy đủ thông tin
                 </div>
 
                 <div class="alert alert-danger" style="display: none">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <strong>Failed to sign up!</strong> Username is already use
+                    <strong>Đăng ký thất bại</strong> Tài khoản đã có người sử dụng
                 </div>
                 
                 <div class="form-group">
@@ -259,7 +259,7 @@
                     </tbody>
                 </table>
                 <a class="btn btn-primary" data-toggle="modal" href='#modal-id'>Change Password</a>
-                <form action="" method="POST" role="form">
+                <form action="" method="POST" role="form" onsubmit="return rePasswd(this[1].value, this[2].value)">
                     <div class="modal fade" id="modal-id">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -307,7 +307,14 @@
         dataLoader();
     }
     let rePasswd = (oldpasswd, newpasswd) => {
-        if(oldpasswd !== session.passwd) return alert('not ok');
-        
+        if(oldpasswd === ''|| oldpasswd !== session.passwd || newpasswd === oldpasswd || newpasswd.length < 6 ) {alert('not ok'); return false};
+        let currentAccount = new Promise((resolve, reject) => {
+            resolve(Users.findIndex(u => u.username === session.username))
+        })
+        .then(index => {
+            Users[index].passwd = newpasswd;
+            alert('Đổi mật khẩu thành công');
+        })
+        return false;
     }
-</script>
+</script> 
