@@ -43,7 +43,7 @@
   opacity: 0.7;
 }
 </style>
-<body onload="headerLoader(session); dataLoader()">
+<body onload="headerLoader('home'); dataLoader()">
     <nav class="navbar navbar-default navbar-inverse" style="border-radius: 0" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -55,25 +55,15 @@
             <a class="navbar-brand" href="#" onclick="dataLoader()">Home</a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse" id="header">
-            <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="#" class="signin" onclick="bodyLoader(this.className)" >Sign in</a></li>
-                <li><a href="#" class="signup" onclick="bodyLoader(this.className)">Sign up</a></li>
-            </ul>
         </div>
     </nav>
     <div class="container" id="body" >
         
         
-        
     </div>
 </body>
 <script>
-    let session = {
-        username: "alkdjsla"
-    };
-    let getFullName = () => {
-        return session.username;
-    }
+    let session = '';
     let component = {signin : `
         <div class="row" id="signin">
             <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-push-2">
@@ -173,33 +163,18 @@
             <li class="active"><a href="#" class="signin" onclick="bodyLoader(this.className)" >Sign in</a></li>
             <li><a href="#" class="signup" onclick="bodyLoader(this.className)">Sign up</a></li>
         </ul>
-    `,
-    accountInfo: `
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>User Name</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>${getFullName()}</td>
-                </tr>
-            </tbody>
-        </table>
     `
     }
     
     
     let headerLoader = site => {
-        // $('#header').html('');
         $('#header').html(component[site]);
     }
     let bodyLoader = pageClassName => {
         $('#body').html(component[pageClassName]);
     }
     let dataLoader = () => {
-        // $('#body').html('');
+        $('#body').html('');
         Rooms.forEach(r => {
             $('#body').append(`
             <div class="container" style="margin-bottom: 20px; border-style: solid; border-color: darkgray; border-radius: 20px">
@@ -223,7 +198,7 @@
         })
     }
     let order = id => {
-        if(session === 'home') return bodyLoader('signin');
+        if(session === '') return bodyLoader('signin');
         let cusOrderArr = new Promise((resolve, reject) => {
             resolve(Orders.filter(order => order.username === session.username));
         })
@@ -249,7 +224,7 @@
             };
             component.clientHeader = `
                 <ul class="nav navbar-nav">
-                    <li><a href="#">Orders</a></li>
+                    
                 </ul>
                 <form class="navbar-form navbar-left" role="search">
                     <div class="form-group">
@@ -258,8 +233,58 @@
                     <button type="submit" class="btn btn-default">Submit</button>
                 </form>
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="active"><a href="#" class="accountinfo" onclick="bodyLoader('accountInfo')" >${data.fullname}</a></li>
+                    <li><a href="#">Orders</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle accountinfo" data-toggle="dropdown"  >${data.fullname} <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" onclick="bodyLoader('accountInfo')">Account Info</a></li>
+                            <li onclick="signOut()"><a href="#">Sign Out</a></li>
+                        </ul>
+                    </li>
                 </ul>
+            `
+            component.accountInfo = `
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Full name</th>
+                            <th>Phone Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${data.fullname}</td>
+                            <td>${data.phone}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a class="btn btn-primary" data-toggle="modal" href='#modal-id'>Change Password</a>
+                <form action="" method="POST" role="form">
+                    <div class="modal fade" id="modal-id">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">Change Password</h4>
+                                </div>
+                                <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="">Old Password</label>
+                                            <input type="password" class="form-control" id="">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">New Password</label>
+                                            <input type="password" class="form-control" id="">
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             `
             headerLoader(`${data.type}Header`); dataLoader();
         });
@@ -275,5 +300,14 @@
             $('.alert-danger').eq(1).css('display', 'block'); return false;
         }
         return false;
+    }
+    let signOut = () => {
+        session = '';
+        headerLoader('home');
+        dataLoader();
+    }
+    let rePasswd = (oldpasswd, newpasswd) => {
+        if(oldpasswd !== session.passwd) return alert('not ok');
+        
     }
 </script>
