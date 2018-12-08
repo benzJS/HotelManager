@@ -14,7 +14,7 @@
 </head>
 <style>
 </style>
-<body onload="headerLoader(); dataLoader()">
+<body onload="headerLoader('home'); dataLoader()">
     <nav class="navbar navbar-default navbar-inverse" style="border-radius: 0" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -23,17 +23,9 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="./index.html">Home</a>
+            <a class="navbar-brand" href="#" onclick="dataLoader()">Home</a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse" id="header">
-            <ul class="nav navbar-nav">
-                <li><a href="">Rooms</a></li>
-                <li><a href="">Services</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="./signin.html">Sign in</a></li>
-                <li><a href="./signup.html">Sign up</a></li>
-            </ul>
         </div>
     </nav>
     <div class="container" id="body" >
@@ -146,20 +138,8 @@
     }
     
     
-    let headerLoader = () => {
-        if(sessionStorage.length > 0){
-            let currentAccount = JSON.parse(sessionStorage.getItem('currentAccount'));
-            $('.navbar-right').html(`
-                <li><a href="./orders.html">Orders</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle accountinfo" data-toggle="dropdown"  >${currentAccount.username} <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="./account.html">Account Info</a></li>
-                        <li onclick="signOut()"><a href="#">Sign Out</a></li>
-                    </ul>
-                </li>
-            `)
-        }
+    let headerLoader = site => {
+        $('#header').html(component[site]);
     }
     let bodyLoader = pageClassName => {
         $('#body').html(component[pageClassName]);
@@ -293,8 +273,9 @@
         return false;
     }
     let signOut = () => {
-        sessionStorage.clear();
-        window.location.assign('./index.html');
+        session = '';
+        headerLoader('home');
+        dataLoader();
     }
     let rePasswd = (oldpasswd, newpasswd) => {
         if(oldpasswd === ''|| oldpasswd !== session.passwd || newpasswd === oldpasswd || newpasswd.length < 6 ) {alert('not ok'); return false};

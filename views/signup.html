@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../public/javascripts/jquery-1.10.2.js"></script>
+    <link rel="stylesheet" href="../public/stylesheet/css/bootstrap.min.css">
+    <script src="../public/javascripts/bootstrap.min.js"></script>
+    <script src="../model/users.js"></script>
+    <title>Sign in</title>
+</head>
+<body onload="contentLoader()">
+    <nav class="navbar navbar-default navbar-inverse" style="border-radius: 0" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="./index.html">Home</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse" id="header">
+            <ul class="nav navbar-nav">
+                <li><a href="">Rooms</a></li>
+                <li><a href="">Services</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="./signin.html">Sign in</a></li>
+                <li><a href="./signup.html">Sign up</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container" id="body" >
+        <div class="row" id="signup">
+            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-push-2">
+                <form id="signUpForm" action="" method="POST" role="form" onsubmit="return signUpValid(this)">
+                    <legend>Sign up</legend>
+                    
+                    <div class="alert alert-danger" style="display: none">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <strong>Đăng ký thất bại!</strong> Tên tài khoản và mật khẩu phải từ 6 đến 10 ký tự
+                    </div>
+    
+                    <div class="alert alert-danger" style="display: none">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <strong>Đăng ký thất bại!</strong> Tên tài khoản đã có người sử dụng
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fullname">Full Name(*)</label>
+                        <input type="text" class="form-control" id="fullname" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username(*)</label>
+                        <input type="text" class="form-control" id="username" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
+                    </div>
+                    <div class="form-group">
+                        <label for="passwd">Password(*)</label>
+                        <input type="password" class="form-control" id="passwd" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
+                    </div>
+                    <i style="display: block">(*): Required field</i>
+                    <button type="submit" class="btn btn-primary">Sign up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    let contentLoader = () => {
+        if(sessionStorage.length > 0) window.location.assign('./index.html');
+    }
+    let signUpValid = (signUpData) => {
+        for (let i = 2; i < signUpData.length - 1; i++) {
+            if(signUpData[i].value === '' || signUpData[i].value.length < 6){
+                $('.alert-danger').eq(0).css('display', 'block'); return false;
+            }
+        }
+        if(!localStorage.getItem('Users')){
+            localStorage.setItem('Users', JSON.stringify([
+                {
+                    fullname: signUpData['fullname'].value,
+                    username: signUpData['username'].value,
+                    passwd: signUpData['passwd'].value
+                }
+            ]))
+            sessionStorage.setItem('currentAccount', JSON.stringify({
+                username: signUpData['fullname'].value,
+                passwd: signUpData['username'].value,
+                type: signUpData['passwd'].value
+            }));
+            alert('Đăng ký thành công!!!');
+            window.location.assign('./index.html')
+            return false;
+        }
+        else{
+            let localUsers = JSON.parse(localStorage.getItem('Users')); // generate a new array of users containing current users
+            if(localUsers.findIndex(u => u.username === signUpData['username'].value) !== -1){
+                $('.alert-danger').eq(1).css('display', 'block'); return false;
+            }
+            localUsers.push({ // push new account into user array
+                fullname: signUpData['fullname'].value,
+                username: signUpData['username'].value,
+                passwd: signUpData['passwd'].value
+            })
+            localStorage.setItem('Users', JSON.stringify(localUsers)); // assign Users = new Users array
+            sessionStorage.setItem('currentAccount', JSON.stringify({
+                username: signUpData['fullname'].value,
+                passwd: signUpData['username'].value,
+                type: signUpData['passwd'].value
+            }));
+            alert('Đăng ký thành công!!!');
+            window.location.assign('./index.html')
+            return false;
+        }
+    }
+</script>
+</html>
