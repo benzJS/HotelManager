@@ -7,10 +7,9 @@
     <script src="../public/javascripts/jquery-1.10.2.js"></script>
     <link rel="stylesheet" href="../public/stylesheet/css/bootstrap.min.css">
     <script src="../public/javascripts/bootstrap.min.js"></script>
-    <script src="../model/users.js"></script>
     <title>Sign in</title>
 </head>
-<body onload="contentLoader()">
+<body onload="checkIn()">
     <nav class="navbar navbar-default navbar-inverse" style="border-radius: 0" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -35,15 +34,19 @@
     <div class="container" id="body" >
         <div class="row" id="signin">
             <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-push-2">
-                <form action="" method="POST" role="form" onsubmit="return signInValid(this[0].value, this[1].value)">
+                <form action="" method="POST" role="form" onsubmit="return signInValid(this[1].value, this[2].value)">
                     <legend>Sign in</legend>
+                    <div class="alert alert-danger" style="display: none">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <strong>Đăng nhập thất bại!</strong> Tên tài khoản hoặc mật khẩu không đúng
+                    </div>
                     <div class="form-group">
                         <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="">
+                        <input type="text" class="form-control" id="username" onfocus="$('.alert-danger').css('display', 'none')">
                     </div>
                     <div class="form-group">
                         <label for="passwd">Password</label>
-                        <input type="password" class="form-control" id="passwd" placeholder="">
+                        <input type="password" class="form-control" id="passwd" onfocus="$('.alert-danger').css('display', 'none')">
                     </div>
                     <button type="submit" class="btn btn-primary">Sign in</button>
                 </form>
@@ -52,24 +55,34 @@
     </div>
 </body>
 <script>
-    let contentLoader = () => {
+    let checkIn = () => {
         if(sessionStorage.length > 0){
             window.location.assign('./index.html')
         }
     }
     let signInValid = (username, passwd) => {
-        let accountInfo = new Promise((resolve, reject) => {
-            resolve(Users.find(u => u.username === username));
-        })
-        .then(data => {
-            if(typeof data === 'undefined' || data.passwd !== passwd) {alert('not ok'); return false;}
-            sessionStorage.setItem('currentAccount', JSON.stringify({
-                username: data.username,
-                passwd: data.passwd,
-                type: data.type
-            }))
-            window.location.assign('./index.html') // put this line into .then method to unreload when sign-in is failed
-        })
+        if(username === 'admin'){
+            sessionStorage.setItem('username', username);
+            window.location.assign('./admin.html');
+        }
+        if(!localStorage.getItem('Users')){
+            $('.alert-danger').css('display', 'block'); return false;
+        }
+        else{
+            let localUsers = JSON.parse(localStorage.getItem('Users'));
+            let accountInfo = new Promise((resolve, reject) => {
+                resolve(localUsers.find(u => u.username === username));
+            })
+                .then(data => {
+                    if(typeof data === 'undefined' || data.passwd !== passwd) {$('.alert-danger').css('display', 'block'); return false;}
+                    sessionStorage.setItem('currentAccount', JSON.stringify({
+                        fullname: data.fullname,
+                        username: data.username,
+                        passwd: data.passwd
+                    }))
+                    window.location.assign('./index.html') // put this line into .then method to unreload when sign-in is failed
+                })
+        }
         return false;
     }
 </script>

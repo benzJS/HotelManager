@@ -7,10 +7,9 @@
     <script src="../public/javascripts/jquery-1.10.2.js"></script>
     <link rel="stylesheet" href="../public/stylesheet/css/bootstrap.min.css">
     <script src="../public/javascripts/bootstrap.min.js"></script>
-    <script src="../model/users.js"></script>
     <title>Sign in</title>
 </head>
-<body onload="contentLoader()">
+<body onload="checkIn()">
     <nav class="navbar navbar-default navbar-inverse" style="border-radius: 0" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -68,10 +67,10 @@
     </div>
 </body>
 <script>
-    let contentLoader = () => {
+    let checkIn = () => {
         if(sessionStorage.length > 0) window.location.assign('./index.html');
     }
-    let signUpValid = (signUpData) => {
+    let signUpValid = signUpData => {
         for (let i = 2; i < signUpData.length - 1; i++) {
             if(signUpData[i].value === '' || signUpData[i].value.length < 6){
                 $('.alert-danger').eq(0).css('display', 'block'); return false;
@@ -86,9 +85,9 @@
                 }
             ]))
             sessionStorage.setItem('currentAccount', JSON.stringify({
-                username: signUpData['fullname'].value,
-                passwd: signUpData['username'].value,
-                type: signUpData['passwd'].value
+                fullname: signUpData['fullname'].value,
+                username: signUpData['username'].value,
+                passwd: signUpData['passwd'].value
             }));
             alert('Đăng ký thành công!!!');
             window.location.assign('./index.html')
@@ -106,9 +105,9 @@
             })
             localStorage.setItem('Users', JSON.stringify(localUsers)); // assign Users = new Users array
             sessionStorage.setItem('currentAccount', JSON.stringify({
-                username: signUpData['fullname'].value,
-                passwd: signUpData['username'].value,
-                type: signUpData['passwd'].value
+                fullname: signUpData['fullname'].value,
+                username: signUpData['username'].value,
+                passwd: signUpData['passwd'].value
             }));
             alert('Đăng ký thành công!!!');
             window.location.assign('./index.html')

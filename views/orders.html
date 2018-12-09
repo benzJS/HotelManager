@@ -7,9 +7,10 @@
     <script src="../public/javascripts/jquery-1.10.2.js"></script>
     <link rel="stylesheet" href="../public/stylesheet/css/bootstrap.min.css">
     <script src="../public/javascripts/bootstrap.min.js"></script>
+    <script src="../model/rooms.js"></script>
     <title>Account Info</title>
 </head>
-<body onload="checkIn()">
+<body onload="checkIn(); dataLoader()">
     <nav class="navbar navbar-default navbar-inverse" style="border-radius: 0" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -32,7 +33,7 @@
         </div>
     </nav>
     
-    <div class="container">
+    <div class="container" id="body">
         <table class="table table-bordered table-hover">
             
         </table>
@@ -93,7 +94,7 @@
             $('.navbar-right').html(`
                 <li><a href="./orders.html">Orders</a></li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle accountinfo" data-toggle="dropdown"  >${currentAccount.fullname} <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle accountinfo" data-toggle="dropdown">${currentAccount.fullname} <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href="./account.html">Account Info</a></li>
                         <li onclick="signOut()"><a href="#">Sign Out</a></li>
@@ -112,15 +113,53 @@
             .then(index => {
                 localUsers[index].passwd = newpasswd;
                 localStorage.setItem('Users', JSON.stringify(localUsers));
-                alert('Đổi mật khẩu thành công, hãy đăng nhập lại');
-                sessionStorage.clear();
-                window.location.assign('./signin.html')
+                alert('Đổi mật khẩu thành công');
             })
+        // console.log(oldpasswd, newpasswd);
         return false;
     }
     let signOut = () => {
         sessionStorage.clear();
         window.location.assign('./index.html');
+    }
+    let dataLoader = () => {
+        $('#body').html('');
+        if(!localStorage.getItem('Orders') || JSON.parse(localStorage.getItem('Orders').length < 1)) 
+            $('#body').html(`
+                <div class="alert alert-info">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <strong>Bạn chưa thực hiện đặt phòng!</strong>
+                </div>
+            `)
+        else{
+            let Orders = JSON.parse(localStorage.getItem('Orders'));
+            let currentAccount = JSON.parse(sessionStorage.getItem('currentAccount'))
+            let cusOrders = new Promise((resolve, reject) => {
+                resolve(Orders.filter(order => order.username === currentAccount.username))
+            })
+                .then(cusOrderArr => {
+                    cusOrderArr.forEach(order => {
+                        let currentRoom = Rooms.find(room => room.id === parseInt(order.room_id));
+                        $('#body').append(`
+                        <div class="container" style="margin-bottom: 20px; border-style: solid; border-color: darkgray; border-radius: 20px; padding: 0; overflow: hidden">
+                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0">
+                                <img src="${currentRoom.img}" class="img-responsive" alt="Image">
+                            </div>
+                            <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9" style="padding: 0">
+                                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                                    <h1>${currentRoom.title}</h1>
+                                    <p>${currentRoom.desc}</p>
+                                </div>
+                                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="display: flex; flex-direction: column; justify-content: center; align-items: center">
+                                    <h1>$${currentRoom.price}</h1>
+                                    <button type="button" class="btn btn-danger">Xóa</button>
+                                </div>
+                            </div>
+                        </div>
+                        `)
+                    })
+                })
+        }
     }
 </script>
 </html>

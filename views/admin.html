@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../public/javascripts/jquery-1.10.2.js"></script>
+    <link rel="stylesheet" href="../public/stylesheet/css/bootstrap.min.css">
+    <script src="../public/javascripts/bootstrap.min.js"></script>
+    <script src="../model/users.js"></script>
+    <script src="../model/rooms.js"></script>
+    <title>Dashboard</title>
+</head>
+<style>
+    .navbar-fixed-left {
+        width: 250px;
+        position: fixed;
+        border-radius: 0;
+        height: 100%;
+    }
+
+    .navbar-fixed-left .navbar-nav > li {
+        float: none;  /* Cancel default li float: left */
+        width: 250px;
+    }
+
+    .navbar-fixed-left + .container {
+        padding-left: 250px;
+    }
+
+    /* On using dropdown menu (To right shift popuped) */
+    .navbar-fixed-left .navbar-nav > li > .dropdown-menu {
+        margin-top: -50px;
+        margin-left: 250px;
+    }
+    .main {
+        margin-left: 250px; /* Same as the width of the sidebar */
+        padding: 0px 10px;
+    }
+</style>
+<body onload="checkIn(); $('#users').click()">
+    <nav class="navbar navbar-default navbar-inverse" style="border-radius: 0" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">ADMIN</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse" id="header">
+            <ul class="nav navbar-nav">
+                <li><a href="#" id="users">Users</a></li>
+                <li><a href="#" id="rooms">Rooms</a></li>
+                <li><a href="#" id="orders">Orders</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+    </div>
+</body>
+<script>
+    let checkIn = () => {
+        if(!sessionStorage.getItem('username') || sessionStorage.getItem('username') !== 'admin') window.location.assign('./index.html')
+        $('.navbar-right').append(`
+            <li onclick="signOut()"><a href="#">Sign Out</a></li>
+        `)
+    }
+    let signOut = () => {
+        sessionStorage.clear();
+        checkIn();
+    }
+    $('#users').click(() => {
+        $('.container').html(`
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Tên đầy đủ</th>
+                        <th>Tên tài khoản</th>
+                        <th>Mật khẩu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        `)
+        if(!localStorage.getItem('Users')){
+            Users.forEach(user => {
+                $('tbody').append(`
+                    <tr>
+                        <td>${user.fullname}</td>
+                        <td>${user.username}</td>
+                        <td>${user.passwd}</td>
+                    </tr>
+                `)
+            })
+        }
+        else{
+            JSON.parse(localStorage.getItem('Users')).forEach(user => {
+                $('tbody').append(`
+                    <tr>
+                        <td>${user.fullname}</td>
+                        <td>${user.username}</td>
+                        <td>${user.passwd}</td>
+                    </tr>
+                `)
+            })
+        }
+    })
+    
+    $('#rooms').click(() => {
+        $('.container').html(`
+            <a class="btn btn-primary" data-toggle="modal" href='#modal-id'>Thêm phòng mới</a>
+            <div class="modal fade" id="modal-id">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Thêm phòng mới</h4>
+                        </div>
+                        <form action="" method="POST" role="form" onsubmit="return insertRoom(this)">
+                            <div class="modal-body">
+                                    <div class="alert alert-danger" style="display: none">
+                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                        <strong>Title!</strong> Alert body ...
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="">Image</label>
+                                        <input type="file" name="" id="img" accept="image/png, image/jpeg" onfocus="$('.alert-danger').css('display', 'none')">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="">Tên phòng</label>
+                                        <input type="text" class="form-control" id="title" onfocus="$('.alert-danger').css('display', 'none')">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="">Mô tả</label>
+                                        <input type="text" class="form-control" id="desc" onfocus="$('.alert-danger').css('display', 'none')">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="">Giá 1 đêm</label>
+                                        <input type="number" class="form-control" id="price" onfocus="$('.alert-danger').css('display', 'none')">
+                                    </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Tên phòng</th>
+                        <th>Mô tả</th>
+                        <th>Giá 1 đêm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        `);
+        if(!localStorage.getItem('Rooms')){
+            Rooms.forEach(room => {
+                $('tbody').append(`
+                    <tr>
+                        <td>${room.title}</td>
+                        <td>${room.desc}</td>
+                        <td>$${room.price}</td>
+                    </tr>
+                `)
+            })
+        }
+        else{
+            JSON.parse(localStorage.getItem('Rooms')).forEach(room => {
+                $('tbody').append(`
+                    <tr>
+                        <td>${room.title}</td>
+                        <td>${room.desc}</td>
+                        <td>$${room.price}</td>
+                    </tr>
+                `)
+            })
+        }
+    })
+    $('#orders').click(() => {
+        if(!localStorage.getItem('Orders'))
+            $('.container').html(`
+                <div class="alert alert-info">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <strong>Chưa có đơn đặt phòng nào!</strong>
+                </div>
+            `);
+        else{
+            $('.container').html(`
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>ID phòng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            `);
+            JSON.parse(localStorage.getItem('Orders')).forEach(order => {
+                console.log(order)
+                $('tbody').append(`
+                    <tr>
+                        <td>${order.username}</td>
+                        <td>${order.room_id}</td>
+                    </tr>
+                `);
+            })
+        }
+    })
+    let insertRoom = (data) => {
+        for (let i = 1; i < data.length - 2; i++) {
+            if(data[i].value === ''){
+                $('.alert-danger').css('display', 'block'); return false;
+            }
+        }
+        if(!localStorage.getItem('Rooms')){
+            Rooms.push({
+                img: data['img'].value,
+                title: data['title'].value,
+                desc: data['desc'].value,
+                price: data['price'].value
+            })
+            localStorage.setItem('Rooms', JSON.stringify(Rooms));
+            $('#rooms').click();
+            $('#modal-id').modal('toggle');
+        }
+        else{
+            let localRooms = JSON.parse(localStorage.getItem('Rooms'));
+            localRooms.push({
+                img: data['img'].value,
+                title: data['title'].value,
+                desc: data['desc'].value,
+                price: data['price'].value
+            })
+            localStorage.setItem('Rooms', JSON.stringify(localRooms));
+            $('#rooms').click();
+            $('#modal-id').modal('toggle');
+        }
+        return false;
+    }
+</script>
+</html>

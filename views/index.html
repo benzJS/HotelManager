@@ -14,7 +14,7 @@
 </head>
 <style>
 </style>
-<body onload="headerLoader(); dataLoader()">
+<body onload="checkIn(); dataLoader()">
     <nav class="navbar navbar-default navbar-inverse" style="border-radius: 0" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -37,122 +37,16 @@
         </div>
     </nav>
     <div class="container" id="body" >
-        
-        
     </div>
 </body>
 <script>
-    let session = '';
-    let component = {signin : `
-        <div class="row" id="signin">
-            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-push-2">
-                <form action="" method="POST" role="form" onsubmit="return signInValid(this[0].value, this[1].value)">
-                    <legend>Sign in</legend>
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="">
-                    </div>
-                    <div class="form-group">
-                        <label for="passwd">Password</label>
-                        <input type="password" class="form-control" id="passwd" placeholder="">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Sign in</button>
-                </form>
-            </div>
-        </div>
-    `,
-    signup : `
-    <div class="row" id="signup">
-        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-push-2">
-            <form id="signUpForm" action="" method="POST" role="form" onsubmit="return signUpValid(this)">
-                <legend>Sign up</legend>
-                
-                <div class="alert alert-danger" style="display: none">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <strong>Đăng ký thất bại!</strong> Bạn phải nhập đầy đủ thông tin
-                </div>
-
-                <div class="alert alert-danger" style="display: none">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <strong>Đăng ký thất bại</strong> Tài khoản đã có người sử dụng
-                </div>
-                
-                <div class="form-group">
-                    <label for="fullname">Full Name(*)</label>
-                    <input type="text" class="form-control" id="fullname" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
-                </div>
-                <div class="form-group">
-                    <label for="username">Username(*)</label>
-                    <input type="text" class="form-control" id="username" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
-                </div>
-                <div class="form-group">
-                    <label for="passwd">Password(*)</label>
-                    <input type="password" class="form-control" id="passwd" placeholder="" onfocus="$('.alert-danger').css('display', 'none')">
-                </div>
-                <i style="display: block">(*): Required field</i>
-                <button type="submit" class="btn btn-primary">Sign up</button>
-            </form>
-        </div>
-    </div>
-    `,
-    home: `
-        <ul class="nav navbar-nav">
-        </ul>
-        <form class="navbar-form navbar-left" role="search">
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search">
-            </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-        </form>
-        <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="#" class="signin" onclick="bodyLoader(this.className)" >Sign in</a></li>
-            <li><a href="#" class="signup" onclick="bodyLoader(this.className)">Sign up</a></li>
-        </ul>
-    `,
-    clientBody: `
-        <div class="container" style="margin-bottom: 20px; border-style: solid; border-color: darkgray; border-radius: 20px">
-            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                <img src="../public/images/BWPlus_Astana_Hotel_Kasachstan.jpg" class="img-responsive" alt="Image" style="padding: 7px">
-            </div>
-            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="">
-                <h1>ASDLKSAJDLKSAJD</h1>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptate praesentium ex dicta, doloribus dolor neque nam quas consequuntur nostrum, porro atque accusantium aspernatur eos ad perspiciatis cumque obcaecati culpa animi.
-            </div>
-            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                <div class="row">
-                    <h2 style="text-align: right; color: green">$199</h2>
-                </div>
-                <div class="row">
-                    <button type="button" class="btn btn-large btn-block btn-success" >button</button>
-                </div>
-            </div>
-        </div>
-    `,
-    admin: `
-        <ul class="nav navbar-nav">
-            <li><a href="#">Orders</a></li>
-        </ul>
-        <form class="navbar-form navbar-left" role="search">
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search">
-            </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-        </form>
-        <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="#" class="signin" onclick="bodyLoader(this.className)" >Sign in</a></li>
-            <li><a href="#" class="signup" onclick="bodyLoader(this.className)">Sign up</a></li>
-        </ul>
-    `
-    }
-    
-    
-    let headerLoader = () => {
+    let checkIn = () => {
         if(sessionStorage.length > 0){
             let currentAccount = JSON.parse(sessionStorage.getItem('currentAccount'));
             $('.navbar-right').html(`
                 <li><a href="./orders.html">Orders</a></li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle accountinfo" data-toggle="dropdown"  >${currentAccount.username} <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle accountinfo" data-toggle="dropdown"  >${currentAccount.fullname} <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href="./account.html">Account Info</a></li>
                         <li onclick="signOut()"><a href="#">Sign Out</a></li>
@@ -166,158 +60,89 @@
     }
     let dataLoader = () => {
         $('#body').html('');
-        Rooms.forEach(r => {
-            $('#body').append(`
-            <div class="container" style="margin-bottom: 20px; border-style: solid; border-color: darkgray; border-radius: 20px">
-                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                    <img src="${r.img}" class="img-responsive" alt="Image" style="padding: 7px">
-                </div>
-                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="">
-                    <h1>${r.title}</h1>
-                    ${r.desc}
-                </div>
-                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                    <div class="row">
-                        <h2 style="text-align: right; color: green">$${r.price}</h2>
-                    </div>
-                    <div class="row">
-                        <button type="button" class="btn btn-large btn-block btn-success" id="${r.id}" onclick="order(this.id)">Order</button>
-                    </div>
-                </div>
-            </div>
-            `)
-        })
-    }
-    let order = id => {
-        if(session === '') return bodyLoader('signin');
-        let cusOrderArr = new Promise((resolve, reject) => {
-            resolve(Orders.filter(order => order.username === session.username));
-        })
-        .then(arr => {
-            if(arr.findIndex(order => order.room_id === id) !== -1) return alert('The order is alreay exists');
-            Orders.push({
-                username: session.username,
-                room_id: id
-            })
-            console.log(Orders);
-        });
-    }
-    let signInValid = (username, passwd) => {
-        let accountInfo = new Promise((resolve, reject) => {
-            resolve(Users.find(u => u.username === username));
-        })
-        .then(data => {
-            if(typeof data === 'undefined' || data.passwd !== passwd) return alert('not ok');
-            session = {
-                username: data.username,
-                passwd: data.passwd,
-                type: data.type
-            };
-            component.clientHeader = `
-                <ul class="nav navbar-nav">
-                    
-                </ul>
-                <form class="navbar-form navbar-left" role="search">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search">
-                    </div>
-                    <button type="submit" class="btn btn-default">Submit</button>
-                </form>
-                <ul class="nav navbar-nav navbar-right">
-                    <li onclick="orderList()"><a href="#">Orders</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle accountinfo" data-toggle="dropdown"  >${data.fullname} <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#" onclick="bodyLoader('accountInfo')">Account Info</a></li>
-                            <li onclick="signOut()"><a href="#">Sign Out</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            `
-            component.accountInfo = `
-                <table class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th>Full name</th>
-                            <th>Phone Number</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>${data.fullname}</td>
-                            <td>${data.phone}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <a class="btn btn-primary" data-toggle="modal" href='#modal-id'>Change Password</a>
-                <form action="" method="POST" role="form" onsubmit="return rePasswd(this[1].value, this[2].value)">
-                    <div class="modal fade" id="modal-id">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                    <h4 class="modal-title">Change Password</h4>
-                                </div>
-                                <div class="modal-body">
-                                        <div class="form-group">
-                                            <label for="">Old Password</label>
-                                            <input type="password" class="form-control" id="">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="">New Password</label>
-                                            <input type="password" class="form-control" id="">
-                                        </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                </div>
+        if(!localStorage.getItem('Rooms'))
+            Rooms.forEach(room => {
+                $('#body').append(`
+                    <div class="container" style="margin-bottom: 20px; border-style: solid; border-color: darkgray; border-radius: 20px; padding: 0; overflow: hidden">
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0">
+                            <img src="${room.img}" class="img-responsive" alt="Image">
+                        </div>
+                        <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9" style="padding: 0">
+                            <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                                <h1>${room.title}</h1>
+                                <p>${room.desc}</p>
+                            </div>
+                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="display: flex; flex-direction: column; justify-content: center; align-items: center">
+                                <h1>$${room.price}</h1>
+                                <button type="button" class="btn btn-default" id="${room.id}" onclick="order(this.id)">Đặt phòng</button>
                             </div>
                         </div>
                     </div>
-                </form>
-            `
-            headerLoader(`${data.type}Header`); dataLoader();
-        });
-        return false;
+                `)
+            })
+        else{
+            JSON.parse(localStorage.getItem('Rooms')).forEach(room => {
+                $('#body').append(`
+                    <div class="container" style="margin-bottom: 20px; border-style: solid; border-color: darkgray; border-radius: 20px; padding: 0; overflow: hidden">
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0">
+                            <img src="${room.img}" class="img-responsive" alt="Image">
+                        </div>
+                        <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9" style="padding: 0">
+                            <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                                <h1>${room.title}</h1>
+                                <p>${room.desc}</p>
+                            </div>
+                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="display: flex; flex-direction: column; justify-content: center; align-items: center">
+                                <h1>$${room.price}</h1>
+                                <button type="button" class="btn btn-default" id="${room.id}" onclick="order(this.id)">Đặt phòng</button>
+                            </div>
+                        </div>
+                    </div>
+                `)
+            })
+        }
     }
-    let signUpValid = (signUpData) => {
-        for (let i = 2; i < signUpData.length - 1; i++) {
-            if(signUpData[i].value === ''){
-                $('.alert-danger').eq(0).css('display', 'block'); return false;
-            }
+    let order = id => {
+        if(!sessionStorage.getItem('currentAccount')) window.location.assign('./signin.html');
+        if(!localStorage.getItem('Orders')){
+            localStorage.setItem('Orders', JSON.stringify([{
+                username: JSON.parse(sessionStorage.getItem('currentAccount')).username,
+                room_id: id
+            }]))
+            console.log(JSON.parse(localStorage.getItem('Orders')));
         }
-        if(Users.findIndex(u => u.username === signUpData['username'].value) !== -1){
-            $('.alert-danger').eq(1).css('display', 'block'); return false;
+        else{
+            let Orders = JSON.parse(localStorage.getItem('Orders'));
+            let currentAccount = JSON.parse(sessionStorage.getItem('currentAccount'))
+            let cusOrderArr = new Promise((resolve, reject) => {
+                resolve(Orders.filter(order => order.username === currentAccount.username));
+            })
+                .then(data => {
+                    if(data.findIndex(order => order.room_id === id) !== -1) return alert('The order is alreay exists');
+                    Orders.push({
+                        username: JSON.parse(sessionStorage.getItem('currentAccount')).username,
+                        room_id: id
+                    })
+                    localStorage.setItem('Orders', JSON.stringify(Orders));
+                    console.log(Orders);
+                });
         }
-        return false;
     }
     let signOut = () => {
         sessionStorage.clear();
         window.location.assign('./index.html');
-    }
-    let rePasswd = (oldpasswd, newpasswd) => {
-        if(oldpasswd === ''|| oldpasswd !== session.passwd || newpasswd === oldpasswd || newpasswd.length < 6 ) {alert('not ok'); return false};
-        let currentAccount = new Promise((resolve, reject) => {
-            resolve(Users.findIndex(u => u.username === session.username))
-        })
-        .then(index => {
-            Users[index].passwd = newpasswd;
-            alert('Đổi mật khẩu thành công');
-        })
-        return false;
     }
     orderList = () => {
         $('#body').html('');
         let data = new Promise((resolve, reject) => {
             resolve(Orders.filter(order => order.username === session.username))
         })
-        .then(orderArr => {
-            orderArr.forEach(order => {
-                $('#body').append(`
-                    <li>${order.room_id}</li>
-                `)
+            .then(orderArr => {
+                orderArr.forEach(order => {
+                    $('#body').append(`
+                        <li>${order.room_id}</li>
+                    `)
+                })
             })
-        })
     }
 </script> 
