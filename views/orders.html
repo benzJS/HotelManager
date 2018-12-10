@@ -91,16 +91,33 @@
             })
         if(sessionStorage.length > 0){
             let currentAccount = JSON.parse(sessionStorage.getItem('currentAccount'));
-            $('.navbar-right').html(`
-                <li><a href="./orders.html">Orders</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle accountinfo" data-toggle="dropdown">${currentAccount.fullname} <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="./account.html">Account Info</a></li>
-                        <li onclick="signOut()"><a href="#">Sign Out</a></li>
-                    </ul>
-                </li>
-            `)
+            if(localStorage.getItem('Orders')){
+                let orderArr = JSON.parse(localStorage.getItem('Orders')).filter(
+                    order => order.username === currentAccount.username
+                )
+                $('.navbar-right').html(`
+                    <li><a href="./orders.html">Orders(${orderArr.length})</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle accountinfo" data-toggle="dropdown"  >${currentAccount.fullname} <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="./account.html">Account Info</a></li>
+                            <li onclick="signOut()"><a href="#">Sign Out</a></li>
+                        </ul>
+                    </li>
+                `)
+            }
+            else{
+                $('.navbar-right').html(`
+                    <li><a href="./orders.html">Orders(0)</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle accountinfo" data-toggle="dropdown"  >${currentAccount.fullname} <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="./account.html">Account Info</a></li>
+                            <li onclick="signOut()"><a href="#">Sign Out</a></li>
+                        </ul>
+                    </li>
+                `)
+            }
         }
     }
     let rePasswd = (oldpasswd, newpasswd) => {
@@ -124,13 +141,18 @@
     }
     let dataLoader = () => {
         $('#body').html('');
-        if(!localStorage.getItem('Orders') || JSON.parse(localStorage.getItem('Orders').length < 1)) 
+        let currentAccount = JSON.parse(sessionStorage.getItem('currentAccount'));
+        if(
+            !localStorage.getItem('Orders') 
+            || JSON.parse(localStorage.getItem('Orders')).filter(order => order.username === currentAccount.username).length < 1
+            //|| JSON.parse(localStorage.getItem('Orders').length < 1)
+            ) 
             $('#body').html(`
                 <div class="alert alert-info">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                     <strong>Bạn chưa thực hiện đặt phòng!</strong>
                 </div>
-            `)
+            `);
         else{
             let Orders = JSON.parse(localStorage.getItem('Orders'));
             let currentAccount = JSON.parse(sessionStorage.getItem('currentAccount'))

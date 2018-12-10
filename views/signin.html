@@ -63,7 +63,7 @@
     let signInValid = (username, passwd) => {
         if(username === 'admin'){
             sessionStorage.setItem('username', username);
-            window.location.assign('./admin.html');
+            window.location.assign('./admin.html'); return false;
         }
         if(!localStorage.getItem('Users')){
             $('.alert-danger').css('display', 'block'); return false;

@@ -43,16 +43,33 @@
     let checkIn = () => {
         if(sessionStorage.length > 0){
             let currentAccount = JSON.parse(sessionStorage.getItem('currentAccount'));
-            $('.navbar-right').html(`
-                <li><a href="./orders.html">Orders</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle accountinfo" data-toggle="dropdown"  >${currentAccount.fullname} <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="./account.html">Account Info</a></li>
-                        <li onclick="signOut()"><a href="#">Sign Out</a></li>
-                    </ul>
-                </li>
-            `)
+            if(localStorage.getItem('Orders')){
+                let orderArr = JSON.parse(localStorage.getItem('Orders')).filter(
+                    order => order.username === currentAccount.username
+                )
+                $('.navbar-right').html(`
+                    <li><a href="./orders.html">Orders(${orderArr.length})</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle accountinfo" data-toggle="dropdown"  >${currentAccount.fullname} <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="./account.html">Account Info</a></li>
+                            <li onclick="signOut()"><a href="#">Sign Out</a></li>
+                        </ul>
+                    </li>
+                `)
+            }
+            else{
+                $('.navbar-right').html(`
+                    <li><a href="./orders.html">Orders(0)</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle accountinfo" data-toggle="dropdown"  >${currentAccount.fullname} <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="./account.html">Account Info</a></li>
+                            <li onclick="signOut()"><a href="#">Sign Out</a></li>
+                        </ul>
+                    </li>
+                `)
+            }
         }
     }
     let bodyLoader = pageClassName => {
@@ -109,7 +126,7 @@
                 username: JSON.parse(sessionStorage.getItem('currentAccount')).username,
                 room_id: id
             }]))
-            console.log(JSON.parse(localStorage.getItem('Orders')));
+            checkIn();
         }
         else{
             let Orders = JSON.parse(localStorage.getItem('Orders'));
@@ -124,7 +141,7 @@
                         room_id: id
                     })
                     localStorage.setItem('Orders', JSON.stringify(Orders));
-                    console.log(Orders);
+                    checkIn();
                 });
         }
     }
